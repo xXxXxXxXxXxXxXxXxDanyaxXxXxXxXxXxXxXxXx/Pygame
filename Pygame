@@ -1,0 +1,96 @@
+# Pygame шаблон - скелет для нового проекта Pygame
+import pygame
+import random
+
+WIDTH =  900
+HEIGHT = 600
+FPS = 30
+x = 10
+y = 15
+# Задаем цвета
+WHITE = (255, 255, 255)
+BLACK = (0, 0, 0)
+RED = (255, 0, 0)
+GREEN = (0, 255, 0)
+BLUE = (0, 0, 255)
+
+class Player(pygame.sprite.Sprite):
+    # class сообщает Python, что определяется новый объект, который будет спрайтом игрока
+    # Его тип pygame.sprite.Sprite
+    # Это значит, что он будет основан на заранее определенном в Pygame классе Sprite
+    def __init__(self): # 
+        
+        pygame.sprite.Sprite.__init__(self) # требуется в Pygame — она запускает инициализатор встроенных классов
+        
+        self.image = pygame.Surface((50, 50)) # необходимо определить свойство image
+        
+        self.image.fill(GREEN) # заполним его зеленым (GREEN) цветом
+        
+        self.rect = self.image.get_rect() 
+        
+        # Команда get_rect() оценивает изображение image и высчитывает прямоугольник, способный окружить его
+        
+        self.rect.center = (WIDTH / 2, HEIGHT / 2) # rect можно использовать для размещения спрайта в любом месте
+
+
+    def update(self): # Чтобы спрайт двигался, нужно определить его правила обновления
+        global x
+        global y
+        self.rect.x += x
+        self.rect.y += y
+        if self.rect.right > WIDTH:
+            x = -x
+        if self.rect.left < 0:
+            x = -x
+        if self.rect.top < 0:
+            y = -y
+        if self.rect.bottom > HEIGHT:
+            y = -y
+        
+
+# создаем игру и окно
+pygame.init() # это команда, которая запускает pygame
+
+pygame.mixer.init()  # для звука
+
+screen = pygame.display.set_mode((WIDTH, HEIGHT)) # screen окно программы, которое создается, когда мы задаем его размер в настройках
+
+pygame.display.set_caption("My Game") # определение названия игры
+
+clock = pygame.time.Clock() # чтобы убедиться, что игра работает с заданной частотой кадров
+
+all_sprites = pygame.sprite.Group() # создаём коллекцию спрайтов 
+
+player = Player() # помещаем класс в переменную 
+
+all_sprites.add(player) # добавляем наш класс в коллекцию
+
+# Цикл игры
+
+running = True
+
+while running:
+    
+    # Держим цикл на правильной скорости
+    clock.tick(FPS)
+    
+    # Ввод процесса (события)
+    
+    for event in pygame.event.get():
+        
+        # проверка на закрытие окна
+        if event.type == pygame.QUIT: #
+            running = False
+
+    # Обновление
+    all_sprites.update() #  для каждого спрайта в группе Pygame ищет функцию update() и запускает ее
+    
+    # Рендеринг
+    screen.fill(BLACK) # 
+    
+    all_sprites.draw(screen) # 
+    
+    # После отрисовки всего, переворачиваем экран
+    pygame.display.flip()
+
+pygame.quit()
