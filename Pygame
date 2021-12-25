@@ -1,11 +1,55 @@
-# Pygame шаблон - скелет для нового проекта Pygame
 import pygame
-import random
-from os import path 
 
-WIDTH =  900
-HEIGHT = 600
-FPS = 30
+import random 
+
+from os import path
+
+import math
+
+background = pygame.image.load("blackground.jpg")#.convert() 
+background_rect = background.get_rect()
+
+# img_blackground = path.join(path.dirname(__file__), 'Admin')
+# background = pygame.image.load(path.join(img_blackground, 'blackground.jpg')).convert()
+# background_rect = background.get_rect()
+
+sun = pygame.image.load("Soley.jpg")#.convert()
+sun_rect = sun.get_rect()
+
+mercuriy = pygame.image.load("Mercuriy.3.jpg")
+mercuriy_rect = mercuriy.get_rect()
+
+venera = pygame.image.load("venera2.jpg")
+venera_rect = venera.get_rect()
+
+earth = pygame.image.load("zemlya.jpg")#.convert()
+earth_rect = earth.get_rect()
+
+mars = pygame.image.load("mars.jpg")#.convert()
+mars_rect = mars.get_rect()
+
+jupiter = pygame.image.load("jupiter.jpg")#.convert()
+jupiter_rect = jupiter.get_rect()
+
+Saturn = pygame.image.load("Saturn_2.jpg")#.convert()
+Saturn_rect = Saturn.get_rect()
+
+Uran = pygame.image.load("Uran_6.jpg")#.convert()
+Uran_rect = Uran.get_rect()
+
+Neptun = pygame.image.load("Neptun_2.jpg")#.convert()
+Neptun_rect = Neptun.get_rect()
+
+Comet_1 = pygame.image.load("comet_1.jpg")#.convert()
+Comet_1_rect = Comet_1.get_rect()
+
+dual_comet = pygame.image.load("dual_comet.jpg")#.convert()
+dual_comet_rect = dual_comet.get_rect()
+
+WIDTH =  1100 
+HEIGHT = 700
+FPS = 100
+
 # Задаем цвета
 WHITE = (255, 255, 255)
 BLACK = (0, 0, 0)
@@ -13,58 +57,156 @@ RED = (255, 0, 0)
 GREEN = (0, 255, 0)
 BLUE = (0, 0, 255)
 
-class Player(pygame.sprite.Sprite):
-    # class сообщает Python, что определяется новый объект, который будет спрайтом игрока
-    # Его тип pygame.sprite.Sprite
-    # Это значит, что он будет основан на заранее определенном в Pygame классе Sprite 
-    def __init__(self, x, y):
+class comets(pygame.sprite.Sprite):
+    
+    def __init__(self, dx, dy, p1 ,p2 , img_comet, random_x0, random_x, random_y0, random_y, limit_x, limit_y, group):
         
-        self.x = 10
+        self.group = group
         
-        self.y = 10
+        self.limit_x = limit_x
         
+        self.limit_y = limit_y
+        
+        self.random_x0 = random_x0
+        
+        self. random_x =  random_x
+        
+        self. random_y0 =  random_y0
+        
+        self. random_y =  random_y
+        
+        self.dx = dx
+        
+        self.dy = dy
+    
         pygame.sprite.Sprite.__init__(self) # требуется в Pygame — она запускает инициализатор встроенных классов
         
-        self.image = pygame.Surface((50, 50)) # необходимо определить свойство image
+        self.image = pygame.transform.scale(img_comet, (p1, p2)) # необходимо определить свойство image
         
-        self.image.fill(GREEN) # заполним его зеленым (GREEN) цветом
+        self.image.set_colorkey(BLACK) # что если (1,1,1)
         
         self.rect = self.image.get_rect() 
         
         # Команда get_rect() оценивает изображение image и высчитывает прямоугольник, способный окружить его
         
-        self.rect.center = (WIDTH / 2, HEIGHT / 2) # rect можно использовать для размещения спрайта в любом месте
-
-
-    def update(self ,x ,y):# Чтобы спрайт двигался, нужно определить его правила обновления
-        self.rect.x += x
-        self.rect.y += y
-        if self.rect.right > WIDTH:
-            x = -x
-        if self.rect.left < 0:
-            x = -x
-        if self.rect.top < 0:
-            y = -y
-        if self.rect.bottom > HEIGHT:
-            y = -y
+        self.rect.center = (random.randrange(self.random_x0,self. random_x),random.randrange(self.random_y0,self. random_y)) # rect можно использовать для размещения спрайта в любом месте
         
+    def update(self,t):# Чтобы спрайт двигался, нужно определить его правила обновления
+        
+        if self.group == 1:
+        
+            self.rect.x += self.dx
+        
+            self.rect.y += self.dy
+        
+            if self.rect.x > self.limit_x or self.rect.y > self.limit_y:
 
+                self.rect.x = random.randrange(self.random_x0,self. random_x)
+
+                self.rect.y = random.randrange(self.random_y0,self. random_y)
+                
+        if self.group == 2:
+        
+            self.rect.x += self.dx
+        
+            self.rect.y += self.dy
+        
+            if self.rect.x > self.limit_x or self.rect.y < self.limit_y:
+
+                self.rect.x = random.randrange(self.random_x0,self. random_x)
+
+                self.rect.y = random.randrange(self.random_y0,self. random_y)
+                
+
+class the_solar_system(pygame.sprite.Sprite):
+    
+    # class сообщает Python, что определяется новый объект, который будет спрайтом игрока
+    # Его тип pygame.sprite.Sprite
+    # Это значит, что он будет основан на заранее определенном в Pygame классе Sprite
+    
+    def __init__(self, x, y, p1 ,p2 ,location_x, location_y, img, a, b, w):
+        
+        self.a = a
+        
+        self.w = w
+        
+        self.b = b
+        
+        self.x = x
+        
+        self.y = y
+        
+        self.location_x = location_x
+        
+        self.location_y = location_y
+        
+        pygame.sprite.Sprite.__init__(self) # требуется в Pygame — она запускает инициализатор встроенных классов
+        
+        self.image = pygame.transform.scale(img, (p1, p2)) # необходимо определить свойство image
+        
+        self.image.set_colorkey(BLACK)
+        
+        self.rect = self.image.get_rect() 
+        
+        # Команда get_rect() оценивает изображение image и высчитывает прямоугольник, способный окружить его
+        
+        self.rect.center = (location_x, location_y) # rect можно использовать для размещения спрайта в любом месте
+
+
+    def update(self,t):# Чтобы спрайт двигался, нужно определить его правила обновления
+        if self.w != 0:
+            t = t/1000
+            a = self.a
+            b = self.b
+            w = self.w
+            t = math.radians(t)
+            x = a * math.cos(w*t)
+            y = b * math.sin(w*t)
+            self.rect.x = WIDTH/2 + x 
+            self.rect.y = HEIGHT/2 + y
+        
 # создаем игру и окно
 pygame.init() # это команда, которая запускает pygame
 
-pygame.mixer.init()  # для звука
+pygame.mixer.music.load("sounds of space.mp3")  # для звука
+
+pygame.mixer.music.play(-1)
 
 screen = pygame.display.set_mode((WIDTH, HEIGHT)) # screen окно программы, которое создается, когда мы задаем его размер в настройках
 
-pygame.display.set_caption("My Game") # определение названия игры
+pygame.display.set_caption("ASTRA*the_solar_system*ASTRA") # определение названия игры
 
 clock = pygame.time.Clock() # чтобы убедиться, что игра работает с заданной частотой кадров
 
 all_sprites = pygame.sprite.Group() # создаём коллекцию спрайтов 
 
-self = Player(10 ,10) # помещаем класс в переменную
+# Некотрые из планет сс
 
-all_sprites.add(player) # добавляем наш класс в коллекцию
+sun = the_solar_system(0, 0, 110, 110, WIDTH/2, HEIGHT/2, sun, 0, 0, 0) # помещаем класс в переменную
+
+mercuriy = the_solar_system(0, 0, 22, 22, 650, HEIGHT/2, mercuriy, 150, 75, 40)
+
+venera = the_solar_system(0, 0, 35, 35, 700, HEIGHT/2, venera, 200, 100, 58)
+
+earth = the_solar_system(0, 0, 35, 35, 750, HEIGHT/2, earth, 250, 125, 55)
+
+mars = the_solar_system(0, 0, 45, 30, 800, HEIGHT/2, mars, 300, 150, 49)
+
+jupiter = the_solar_system(0, 0, 60, 50, 850, HEIGHT/2, jupiter, 350, 175, 51)
+
+Saturn = the_solar_system(0, 0, 70, 60, 920, HEIGHT/2, Saturn, 400, 200, 54)
+
+Uran = the_solar_system(0, 0, 50, 50, 970, HEIGHT/2, Uran, 450, 225, 43)
+
+Neptun = the_solar_system(0, 0, 40, 40, 1020, HEIGHT/2, Neptun, 500, 250, 36)
+
+Comet_1 = comets(7, -2, 40, 40, Comet_1, -80, -70, HEIGHT/4, HEIGHT + 200, WIDTH, 0, 2)
+
+Dual_comet = comets(4, 6, 40, 40, dual_comet, 0, WIDTH * 0.6, -150, -100, WIDTH, HEIGHT, 1)
+
+all_sprites.add(sun, mercuriy, venera, earth, mars, jupiter, Saturn, Uran, Neptun, Comet_1, Dual_comet) # добавляем наш класс в коллекцию
+
+t = 0
 
 # Цикл игры
 
@@ -84,18 +226,22 @@ while running:
             running = False
 
     # Обновление
-    all_sprites.update() #  для каждого спрайта в группе Pygame ищет функцию update() и запускает ее
+    all_sprites.update(t) #  для каждого спрайта в группе Pygame ищет функцию update() и запускает ее
     
     # Рендеринг
+    dt = clock.tick(100)
+    t += dt
+    
     screen.fill(BLACK) # 
     
-    circle = pygame.draw.circle(screen , WHITE ,(300, 400), 50)
-    
-    ellipse = pygame.draw.ellipse(screen , BLUE ,(10, 50, 280, 100))
-    
+    screen.blit(background, background_rect)
+ 
     all_sprites.draw(screen) # 
     
     # После отрисовки всего, переворачиваем экран
     pygame.display.flip()
 
 pygame.quit()
+
+    # 2.Что если долго считать время? память конечна
+    # 3.Таймеры на события, например появление комет 
